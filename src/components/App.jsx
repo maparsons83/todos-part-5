@@ -1,7 +1,8 @@
 import React, { Component } from "react";
-import toDoList from "./todos.json";
-import "./index.css";
+import toDoList from "../todos.json";
+import "../index.css";
 import TodoList from "./TodoList.jsx";
+import { Route, Switch, Link } from "react-router-dom";
 
 class App extends Component {
   constructor(props) {
@@ -36,7 +37,7 @@ class App extends Component {
   handleDeleteCompleted = e => {
     const { todos } = this.state;
     this.setState({
-      todos: todos.filter(todo => todo.completed === false)
+      todos: todos.filter(todo => !todo.completed)
     });
   };
 
@@ -59,6 +60,8 @@ class App extends Component {
     }
   };
   render() {
+    const active = this.state.todos.filter(todo => !todo.completed);
+    const completed = this.state.todos.filter(todo => todo.completed);
     return (
       <section className="todoapp">
         <header className="header">
@@ -71,21 +74,61 @@ class App extends Component {
             autoFocus
           />
         </header>
-        <TodoList
-          todos={this.state.todos}
-          handleCheck={this.handleCheck}
-          handleDelete={this.handleDelete}
-        />{" "}
+        <Switch>
+          <Route
+            exact
+            path="/"
+            render={props => (
+              <TodoList
+                {...props}
+                todos={this.state.todos}
+                handleCheck={this.handleCheck}
+                handleDelete={this.handleDelete}
+              />
+            )}
+          />
+          <Route
+            path="/active"
+            render={props => (
+              <TodoList
+                {...props}
+                todos={active}
+                handleCheck={this.handleCheck}
+                handleDelete={this.handleDelete}
+              />
+            )}
+          />
+          <Route
+            path="/completed"
+            render={props => (
+              <TodoList
+                {...props}
+                todos={completed}
+                handleCheck={this.handleCheck}
+                handleDelete={this.handleDelete}
+              />
+            )}
+          />
+        </Switch>{" "}
         <footer className="footer">
           <span className="todo-count">
             <strong>
               {" "}
-              {
-                this.state.todos.filter(todo => todo.completed === false).length
-              }{" "}
+              {this.state.todos.filter(todo => !todo.completed).length}{" "}
             </strong>{" "}
             item(s) left{" "}
           </span>{" "}
+          <ul className="filters">
+            <li>
+              <Link to="/">All</Link>
+            </li>
+            <li>
+              <Link to="/active">Active</Link>
+            </li>
+            <li>
+              <Link to="/completed">Completed</Link>
+            </li>
+          </ul>
           <button
             onClick={this.handleDeleteCompleted}
             className="clear-completed"
