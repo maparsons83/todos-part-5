@@ -3,6 +3,13 @@ import toDoList from "../todos.json";
 import "../index.css";
 import TodoList from "./TodoList.jsx";
 import { Route, Switch, Link } from "react-router-dom";
+import { connect } from "react-redux";
+import {
+  MARK_COMPLETE,
+  ADD_TODO,
+  DELETE_TODO,
+  CLEAR_COMPLETED
+} from "../actions.js";
 
 class App extends Component {
   constructor(props) {
@@ -35,10 +42,12 @@ class App extends Component {
   };
 
   handleDeleteCompleted = e => {
-    const { todos } = this.state;
-    this.setState({
-      todos: todos.filter(todo => !todo.completed)
-    });
+  //   const { todos } = this.state;
+  //   this.setState({
+  //     todos: todos.filter(todo => !todo.completed)
+  //   });
+  // };
+  this.props.store.dispatch({type: CLEAR_COMPLETED})
   };
 
   handlePress = e => {
@@ -140,5 +149,6 @@ class App extends Component {
     );
   }
 }
+
 
 export default App;
