@@ -24,27 +24,25 @@ export default function todoAppReducer(state = initialState, action) {
                         : todo
                   )
             });
-            break;
         case ADD_TODO:
             return Object.assign({}, state, {
                 todos: [...state.todos,
                     {
-                        text: action.text,
+                        userId: 1,
+                        id: state.todos.length ? state.todos[state.todos.length - 1].id + 1 : 1,
+                        title: action.title,
                         completed: false
                     }
                 ]
             });
-            break;
         case DELETE_TODO:
             return Object.assign({}, state, {
                 todos: state.todos.filter(todo => todo.id !== action.id)
             })
-            break;
         case CLEAR_COMPLETED:
             return Object.assign({}, state, {
                 todos: state.todos.filter(todo => !todo.completed)
             })
-            break;
         default:
             return state;
     }

@@ -1,76 +1,42 @@
 import React, { Component } from "react";
-import toDoList from "../todos.json";
 import "../index.css";
 import TodoList from "./TodoList.jsx";
-import { Route, Switch, Link } from "react-router-dom";
+import { Route, Switch, Link, withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import {
-  MARK_COMPLETE,
-  ADD_TODO,
-  DELETE_TODO,
-  CLEAR_COMPLETED
+  markCompleted,
+  addTodo,
+  deleteTodo,
+  clearCompleted
 } from "../actions.js";
 
-class App extends Component {
+export class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      todos: toDoList
-    };
-  }
-
-  handleCheck = id => e => {
-    const { todos } = this.state;
-    this.setState({
-      todos: todos.map(
-        todo =>
-          todo.id === id
-            ? {
-                ...todo,
-                completed: !todo.completed
-              }
-            : todo
-      )
-    });
   };
 
-  handleDelete = id => e => {
-    const { todos } = this.state;
-    this.setState({
-      todos: todos.filter(todo => todo.id !== id)
-    });
+  handleCheck = id => () => {
+    this.props.dispatch(markCompleted(id));
   };
 
-  handleDeleteCompleted = e => {
-  //   const { todos } = this.state;
-  //   this.setState({
-  //     todos: todos.filter(todo => !todo.completed)
-  //   });
-  // };
-  this.props.store.dispatch({type: CLEAR_COMPLETED})
+  handleDelete = id => () => {
+    this.props.dispatch(deleteTodo(id));
+  };
+
+  handleDeleteCompleted = () => {
+    this.props.dispatch(clearCompleted())
   };
 
   handlePress = e => {
-    let updatedTodoList = this.state.todos.slice();
-    let newTodo = {
-      userId: 1,
-      id: this.state.todos.length
-        ? this.state.todos[this.state.todos.length - 1].id + 1
-        : 1,
-      title: e.target.value,
-      completed: false
+    if (e.key === "Enter" && e.target.value !== ''){
+    this.props.dispatch(addTodo(e.target.value))
+    document.getElementById('text').value = '';
     };
-    updatedTodoList.push(newTodo);
-    if (e.key === "Enter" && e.target.value !== "") {
-      this.setState({
-        todos: updatedTodoList
-      });
-      document.getElementById("text").value = "";
-    }
   };
+  
   render() {
-    const active = this.state.todos.filter(todo => !todo.completed);
-    const completed = this.state.todos.filter(todo => todo.completed);
+    const active = this.props.todos.filter(todo => !todo.completed);
+    const completed = this.props.todos.filter(todo => todo.completed);
     return (
       <section className="todoapp">
         <header className="header">
@@ -90,7 +56,7 @@ class App extends Component {
             render={props => (
               <TodoList
                 {...props}
-                todos={this.state.todos}
+                todos={this.props.todos}
                 handleCheck={this.handleCheck}
                 handleDelete={this.handleDelete}
               />
@@ -123,7 +89,7 @@ class App extends Component {
           <span className="todo-count">
             <strong>
               {" "}
-              {this.state.todos.filter(todo => !todo.completed).length}{" "}
+              {this.props.todos.filter(todo => !todo.completed).length}{" "}
             </strong>{" "}
             item(s) left{" "}
           </span>{" "}
@@ -149,6 +115,5 @@ class App extends Component {
     );
   }
 }
-
-
-export default App;
+const mapStateToProps = state => ({todos: state.todos});
+export default withRouter(connect(mapStateToProps)(App));

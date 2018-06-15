@@ -8,6 +8,7 @@ function TodoList(props) {
         {props.todos.map(todo => (
           <TodoItem
             key={todo.id}
+            // id={todo.id}
             text={todo.title}
             completed={todo.completed}
             handleCheck={props.handleCheck(todo.id)}
