@@ -9,9 +9,9 @@ import todoAppReducer from "./reducer.js";
 import registerServiceWorker from "./registerServiceWorker";
 
 const store = createStore(todoAppReducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
-
+ 
 ReactDOM.render(
-  <BrowserRouter>
+  <BrowserRouter basename={process.env.PUBLIC_URL}>
   <Provider store={store}>
     <App />
   </Provider>
